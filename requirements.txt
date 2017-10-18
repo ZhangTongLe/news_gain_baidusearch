@@ -1,0 +1,8 @@
+xpinyin
+bs4
+pymongo
+urllib
+requests
+flask
+flask_cors
+chardet

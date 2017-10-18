@@ -1,0 +1,31 @@
+image: registry.cloud.sinocbd.com/python:3.6
+
+variables:
+  DOCKER_REGISTRY: "registry.cloud.sinocbd.com"
+  APP_NAME: "news_gain_baidusearch"
+  USERNAME: "zfname"
+  CI_BUILD_ID: "0.1"
+
+before_script:
+
+  - docker info
+
+build:
+  stage: build
+  script:
+    - echo $CI_BUILD_ID > ./version
+
+    - docker build -t ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:$CI_BUILD_ID .
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - docker tag ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:$CI_BUILD_ID ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:latest
+    - docker push ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:$CI_BUILD_ID
+    - docker push ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:latest
+    - docker rmi ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:$CI_BUILD_ID
+    - docker rmi ${DOCKER_REGISTRY}/${USERNAME}/${APP_NAME}:latest
+  only:
+    - master
